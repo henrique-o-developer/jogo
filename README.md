@@ -56,6 +56,7 @@ nao tem nenhum acento porque por exemplo vou tentar escrever e com acento agudo 
 
 nossa mas o jogo nem tem personagem direito e voce ja esta adicionando ele ao github e colocando licensa? Obvio quanto mais cedo melhor!
 
+ta demorando muito pra sair novas verçoes! pq? preguiça!
 # participantes
 
 programador, graphics designer, sound designer, etc...: henrique franchesco de almeida do rosario<br>
