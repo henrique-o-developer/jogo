@@ -8,7 +8,7 @@ para começar entre em `sua-home/.GAME/graphics/default` e la onde estao localiz
 ### como trocar
 
 todas as "imagens" do jogo sao gifs (`.gif`) para suportar animacoes ate mesmo em blocos (exemplo agua ainda nao adicionada)<br>
-mas e se eu nao quiser colocar o gif do player andando na pasta `sua-home/.GAME/graphics/default/player/player-walking.gif`? simples crie um arquivo la chamado `player-walking.redirect` contendo o seguinte [link pro arquivo](https://github.com/henrique-o-developer/jogo/blob/master/res/graphics/textures/default/player/player-walking.redirect) (nao entende ingles? bota no tradutor kkkk) <br>
+mas e se eu nao quiser colocar o gif do player andando na pasta `sua-home/.GAME/graphics/default/player/player-walking.gif`? simples crie um arquivo la chamado `player-walking.gif.redirect` contendo o seguinte [link pro arquivo](https://github.com/henrique-o-developer/jogo/blob/master/res/graphics/textures/default/player/player-walking.gif.redirect) (nao entende ingles? bota no tradutor kkkk) <br>
 
 ## traduçoes
 

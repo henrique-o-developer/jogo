@@ -194,10 +194,13 @@ public class Gif {
     }
 
     public void drawAnimatedGif(Graphics g) {
-        var frmsM = frames[frams].getDelay();
+        int frmsM = frames[frams].getDelay();
+        System.out.println(frms);
+        System.out.println(frams);
 
         if (frms >= frmsM) {
             frms = 0;
+            frams++;
 
             if (frams >= frames.length) {
                 frams = 0;

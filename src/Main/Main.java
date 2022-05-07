@@ -20,7 +20,7 @@ public class Main extends Canvas implements Runnable {
     public static boolean isRunning = true;
     public static double FPS = 60, fps = 0, ffps = FPS;
     public static int WIDTH = 240, HEIGHT = 160, SCALE = 3;
-    private BufferedImage image;
+    BufferedImage image;
     public static Main obj;
 
     public Main() {
@@ -77,8 +77,6 @@ public class Main extends Canvas implements Runnable {
 
         Main game = new Main();
         game.start();
-
-        System.out.println(new GifGetter(new File("/home/henrique/Documents/pro/java/GAME/res/graphics/textures/default/player/player-walking.redirect")).toString());
     }
 
     private static IIOMetadataNode getNode(IIOMetadataNode rootNode, String nodeName) {
@@ -114,7 +112,7 @@ public class Main extends Canvas implements Runnable {
 
         Graphics g = image.getGraphics();
 
-        Spritesheet.playerWalking.drawAnimatedGif(g);
+        Spritesheet.playerWalking.getGif().drawAnimatedGif(g);
 
         new RenderInlineEvent("getting defined graphics", null, 0, false, false);
         g = bs.getDrawGraphics();

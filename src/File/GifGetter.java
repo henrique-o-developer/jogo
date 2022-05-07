@@ -9,8 +9,16 @@ public class GifGetter {
     protected Gif gif;
     protected HashMap<String, String> props;
     protected RedirectFileInterpreter red;
+    protected File f;
 
     public GifGetter(File f) {
+
+        if (!f.exists() && !f.getAbsolutePath().endsWith(".redirect")) {
+            f = new File(f.getAbsolutePath() + ".redirect");
+        }
+
+        this.f = f;
+
         String ex = FileInterpreter.getExtension(f);
 
         switch (ex) {
@@ -41,6 +49,14 @@ public class GifGetter {
         System.out.println((f.exists()) ? new FileInterpreter(f) : null);
 
         return (f.exists()) ? new FileInterpreter(f) : null;
+    }
+
+    public FileInterpreter getProps() {
+        return getProps(f.getName(), f.getParent());
+    }
+
+    public Gif getGif() {
+        return gif;
     }
 
     @Override

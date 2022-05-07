@@ -1,7 +1,0 @@
-# <- indicate an comment
-
-folder: ./player-walking # indicates the folder of file (if it not exist it will be extracted from file)
-file: ./player-walking/player-walking.gif # indicates the file (if it not exist it will be extracted from folder + this file name)
-
-# if folder and file not exists it return an error
-

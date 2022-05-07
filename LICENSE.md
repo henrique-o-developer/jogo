@@ -1,1 +1,1 @@
-ate esse momento o download e gratuito mas todas as imagens codigos e etc sao reservados a henrique franchesco de almeida do rosario
+todos os direitos de todos os arquivos, musicas, historia, personagens, codigos, são reservados a mim (henrique franchesco de almeida do rosario) 
