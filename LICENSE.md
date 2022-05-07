@@ -1,1 +1,1 @@
-todos os direitos de todos os arquivos, musicas, historia, personagens, codigos, são reservados a mim (henrique franchesco de almeida do rosario) 
+todos os direitos de todos os arquivos, musicas, historia, personagens, ideias, são reservados a mim (henrique franchesco de almeida do rosario), com tudo o download e modding (criação de mods e addons) estão permitidos
