@@ -1,19 +1,26 @@
 package Main;
 
-import Events.*;
-import File.*;
+import Entities.Entity;
+import Entities.Player.Player;
+import Errors.Success;
+import Events.Interfaces.CancelInterface;
+import Events.RunEvent;
 import Graphics.*;
 import Events.Inline.*;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.List;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.imageio.metadata.IIOMetadataNode;
 import javax.swing.JFrame;
 
-public class Main extends Canvas implements Runnable {
+public class Main extends Canvas implements Runnable, KeyListener {
     private static final long serialVersionUID = 1L;
     public static JFrame frame;
     private Thread thread;
@@ -22,6 +29,7 @@ public class Main extends Canvas implements Runnable {
     public static int WIDTH = 240, HEIGHT = 160, SCALE = 3;
     BufferedImage image;
     public static Main obj;
+    public static List<Entity> entities = new ArrayList<>();
 
     public Main() {
         obj = this;
@@ -37,6 +45,8 @@ public class Main extends Canvas implements Runnable {
         new InitInlineEvent("setting image", null, 0, false, false);
 
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+
+        this.addKeyListener(this);
     }
 
     public synchronized void start() {
@@ -79,23 +89,21 @@ public class Main extends Canvas implements Runnable {
         game.start();
     }
 
-    private static IIOMetadataNode getNode(IIOMetadataNode rootNode, String nodeName) {
-        int nNodes = rootNode.getLength();
-        for (int i = 0; i < nNodes; i++) {
-            if (rootNode.item(i).getNodeName().compareToIgnoreCase(nodeName) == 0) {
-                return((IIOMetadataNode) rootNode.item(i));
-            }
-        }
-        IIOMetadataNode node = new IIOMetadataNode(nodeName);
-        rootNode.appendChild(node);
-        return(node);
-    }
-
     public void tick() {
         new TickInlineEvent("redefining metrics", null, 0, false, false);
 
         WIDTH = frame.getWidth() / SCALE;
         HEIGHT = frame.getHeight() / SCALE;
+
+        new TickInlineEvent("ticking entities", null, 0, false, false);
+
+        for (Entity entitye : entities) {
+            if (!(entitye instanceof Player)) entitye.tick();
+        }
+
+        for (Entity entitye : entities) {
+            if (entitye instanceof Player) entitye.tick();
+        }
     }
 
     public void render() {
@@ -112,7 +120,20 @@ public class Main extends Canvas implements Runnable {
 
         Graphics g = image.getGraphics();
 
-        Spritesheet.playerWalking.getGif().drawAnimatedGif(g);
+        new RenderInlineEvent("cleaning screen", null, 0, false, false);
+
+        g.setColor(new Color(40, 40, 40));
+        g.fillRect(0, 0, WIDTH, HEIGHT);
+
+        new RenderInlineEvent("drawing entities", null, 0, false, false);
+
+        for (Entity entitye : entities) {
+            if (!(entitye instanceof Player)) entitye.render(g);
+        }
+
+        for (Entity entitye : entities) {
+            if (entitye instanceof Player) entitye.render(g);
+        }
 
         new RenderInlineEvent("getting defined graphics", null, 0, false, false);
         g = bs.getDrawGraphics();
@@ -133,9 +154,13 @@ public class Main extends Canvas implements Runnable {
             Variables.decompileJar();
         }
 
-        new RunInlineEvent("setting Sprite sheet vars", null, 0, false, false);
+        new RunInlineEvent("setting Spritesheet vars", null, 0, false, false);
 
         Spritesheet.setVars();
+
+        new RunInlineEvent("creating player", null, 0, false, false);
+
+        entities.add(new Player(10, 10, 32, 32, Spritesheet.playerWalking.getGif()));
 
         new RunInlineEvent("setting vars", null, 0, false, false);
 
@@ -143,6 +168,34 @@ public class Main extends Canvas implements Runnable {
         double ns = 1000000000 / FPS;
         double delta = 0;
         double timer = System.currentTimeMillis();
+
+        new RunEvent("requesting focus", new CancelInterface() {
+            @Override
+            public Success cancel() {
+                return null;
+            }
+
+            @Override
+            public int maxTimeToCancelInMills() {
+                return 10;
+            }
+
+            @Override
+            public boolean hasMaxTimeToCancel() {
+                return true;
+            }
+
+            @Override
+            public boolean isCancelable() {
+                return true;
+            }
+
+            @Override
+            public void run() {
+                Main.obj.requestFocus();
+            }
+        });
+
         new RunInlineEvent("running while", null, 0, false, false);
 
         while (isRunning) {
@@ -164,8 +217,7 @@ public class Main extends Canvas implements Runnable {
             if (System.currentTimeMillis() - timer >= 1000) {
                 new RunInlineEvent("printing fps", null, 0, false, false);
 
-                System.out.println("fps: "+ fps);
-                ffps = (ffps + fps) / 2;
+                ffps = (int) ((ffps + fps) / 2);
                 fps = 0;
                 timer = System.currentTimeMillis();
             }
@@ -192,5 +244,46 @@ public class Main extends Canvas implements Runnable {
         int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
         g.setFont(font);
         g.drawString(text, x, y);
+    }
+
+    @Override
+    public void keyTyped(KeyEvent keyEvent) {
+        System.out.println(keyEvent);
+    }
+
+    @Override
+    public void keyPressed(KeyEvent keyEvent) {
+        Key k = Key.getByCode(keyEvent.getKeyCode());
+
+        for (Entity entity : entities) {
+            if (entity instanceof Player) {
+                if (Variables.U.equals(k)) {
+                    ((Player) entity).move("u", false);
+                }
+                if (Variables.L.equals(k)) {
+                    ((Player) entity).move("l", false);
+                } else if (Variables.R.equals(k)) {
+                    ((Player) entity).move("r", false);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent keyEvent) {
+        Key k = Key.getByCode(keyEvent.getKeyCode());
+
+        for (Entity entity : entities) {
+            if (entity instanceof Player) {
+                if (Variables.U.equals(k)) {
+                    ((Player) entity).move("u", true);
+                }
+                if (Variables.L.equals(k)) {
+                    ((Player) entity).move("l", true);
+                } else if (Variables.R.equals(k)) {
+                    ((Player) entity).move("r", true);
+                }
+            }
+        }
     }
 }

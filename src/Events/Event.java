@@ -5,6 +5,8 @@ import Errors.Success;
 import Events.Interfaces.CancelInterface;
 import Main.Main;
 
+import java.util.TimerTask;
+
 public class Event extends EventHandler {
     public String what;
     public String ext;
@@ -22,9 +24,12 @@ public class Event extends EventHandler {
         this.ext = ext;
 
         if (!cancel.isCancelable() || !cancel.hasMaxTimeToCancel()) cancel.run();
-        else Main.setTimeout(() -> {
-            if (!canceled) cancel.run();
-        }, cancel.maxTimeToCancelInMills()-1);
+        else Main.setTimeout(new TimerTask() {
+            @Override
+            public void run() {
+                if (!canceled) cancel.run();
+            }
+        }, cancel.maxTimeToCancelInMills() - 1);
 
         addEvent(this);
     }

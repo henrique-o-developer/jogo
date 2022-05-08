@@ -1,5 +1,6 @@
 package Graphics;
 
+import File.GifGetter;
 import Graphics.Utils.ImageFrame;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -14,10 +15,8 @@ import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 
 public class Gif {
     private final String path;
@@ -26,8 +25,11 @@ public class Gif {
     private final BufferedImage[] drawableImages;
     private int frams = 0, frms = 0;
 
-    public Gif(String path) {
+    private final HashMap<String, String> props;
+
+    public Gif(String path, HashMap<String, String> props) {
         this.path = path;
+        this.props = props == null ? new HashMap<>() : props;
 
         frames = getFrames();
 
@@ -96,9 +98,6 @@ public class Gif {
                 }
             }
 
-            BufferedImage master = null;
-            boolean hasBackround = false;
-
             for (int frameIndex = 0; ; frameIndex++) {
                 BufferedImage image;
                 try {
@@ -114,75 +113,14 @@ public class Gif {
 
                 IIOMetadataNode root = (IIOMetadataNode) reader.getImageMetadata(frameIndex).getAsTree("javax_imageio_gif_image_1.0");
                 IIOMetadataNode gce = (IIOMetadataNode) root.getElementsByTagName("GraphicControlExtension").item(0);
-                NodeList children = root.getChildNodes();
 
                 int delay = Integer.valueOf(gce.getAttribute("delayTime"));
 
                 String disposal = gce.getAttribute("disposalMethod");
 
-                if (master == null) {
-                    master = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                    master.createGraphics().setColor(backgroundColor);
-                    master.createGraphics().fillRect(0, 0, master.getWidth(), master.getHeight());
-
-                    hasBackround = image.getWidth() == width && image.getHeight() == height;
-
-                    master.createGraphics().drawImage(image, 0, 0, null);
-                } else {
-                    int x = 0;
-                    int y = 0;
-
-                    for (int nodeIndex = 0; nodeIndex < children.getLength(); nodeIndex++) {
-                        Node nodeItem = children.item(nodeIndex);
-
-                        if (nodeItem.getNodeName().equals("ImageDescriptor")) {
-                            NamedNodeMap map = nodeItem.getAttributes();
-
-                            x = Integer.valueOf(map.getNamedItem("imageLeftPosition").getNodeValue());
-                            y = Integer.valueOf(map.getNamedItem("imageTopPosition").getNodeValue());
-                        }
-                    }
-
-                    if (disposal.equals("restoreToPrevious")) {
-                        BufferedImage from = null;
-                        for (int i = frameIndex - 1; i >= 0; i--) {
-                            if (!frames.get(i).getDisposal().equals("restoreToPrevious") || frameIndex == 0) {
-                                from = frames.get(i).getImage();
-                                break;
-                            }
-                        }
-
-                        {
-                            ColorModel model = from.getColorModel();
-                            boolean alpha = from.isAlphaPremultiplied();
-                            WritableRaster raster = from.copyData(null);
-                            master = new BufferedImage(model, raster, alpha, null);
-                        }
-                    } else if (disposal.equals("restoreToBackgroundColor") && backgroundColor != null) {
-                        if (!hasBackround || frameIndex > 1) {
-                            master.createGraphics().fillRect(lastx, lasty, frames.get(frameIndex - 1).getWidth(), frames.get(frameIndex - 1).getHeight());
-                        }
-                    }
-                    master.createGraphics().drawImage(image, x, y, null);
-
-                    lastx = x;
-                    lasty = y;
-                }
-
-                {
-                    BufferedImage copy;
-
-                    {
-                        ColorModel model = master.getColorModel();
-                        boolean alpha = master.isAlphaPremultiplied();
-                        WritableRaster raster = master.copyData(null);
-                        copy = new BufferedImage(model, raster, alpha, null);
-                    }
-                    frames.add(new ImageFrame(copy, delay, disposal, image.getWidth(), image.getHeight()));
-                }
-
-                master.flush();
+                frames.add(new ImageFrame(image, delay, disposal, image.getWidth(), image.getHeight(), backgroundColor));
             }
+
             reader.dispose();
 
             return frames.toArray(new ImageFrame[frames.size()]);
@@ -193,26 +131,60 @@ public class Gif {
         return null;
     }
 
-    public void drawAnimatedGif(Graphics g) {
+    public void resetAnimation() {
+        frms = 0;
+        frams = 0;
+    }
+    public void drawAnimatedGif(Graphics g, int x, int y, int w, int h) {
+        drawAnimatedGif(g, new Rectangle(x, y, w, h));
+    }
+    public void drawAnimatedGif(Graphics g, Rectangle r) {
         int frmsM = frames[frams].getDelay();
-        System.out.println(frms);
-        System.out.println(frams);
 
         if (frms >= frmsM) {
             frms = 0;
             frams++;
 
-            if (frams >= frames.length) {
-                frams = 0;
+            int max = -1;
+
+            try {
+                max = Integer.parseInt(props.get("stopGifAtIndex"));
+
+                if (max >= frames.length) max = frames.length;
+                if (max < 0) max = 0;
+            }  catch (Exception e) {
+                e.printStackTrace();
             }
 
-            drawGifFrameByIndex(frams, g);
+            if (max == -1) max = frames.length;
+
+            if (frams >= max) {
+                int restart = -1;
+
+                try {
+                    restart = Integer.parseInt(props.get("restartGifAtIndex"));
+
+                    if (restart >= frames.length) restart = 0;
+                    if (restart < 0) restart = 0;
+                    if (restart > max) restart = max;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (restart == -1) restart = 0;
+
+                frams = restart;
+            }
         } else frms++;
+
+        drawGifFrameByIndex(frams, g, r);
     }
 
     private BufferedImage[] getImagesToDraw() {
         BufferedImage master = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         List<BufferedImage> imgs = new ArrayList();
+        boolean dbgc = Objects.equals(props.get("drawBGColor"), "true");
+
         for (ImageFrame frame : frames) {
             BufferedImage img = frame.getImage();
             String dis = frame.getDisposal();
@@ -220,9 +192,16 @@ public class Gif {
 
             if (Objects.equals(dis, "restoreToBackgroundColor")) {
                 master = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+
+                Graphics2D g = (Graphics2D) master.getGraphics();
+
+                if (dbgc) {
+                    g.setColor(frame.getBack());
+                    g.fillRect(0, 0, master.getWidth(), master.getHeight());
+                }
             }
 
-            Graphics g = master.getGraphics();
+            Graphics2D g = (Graphics2D) master.getGraphics();
 
             g.drawImage(img, img.getTileGridXOffset(), img.getTileGridYOffset(), frame.getWidth(), frame.getHeight(), null);
 
@@ -232,22 +211,50 @@ public class Gif {
         return imgs.toArray(new BufferedImage[frames.length]);
     }
 
-    public void drawGifFrameByIndex(int i, Graphics g) {
+    public void drawGifFrameByIndex(int i, Graphics g, int x, int y, int w, int h) {
+        drawGifFrameByIndex(i, g, new Rectangle(x, y, w, h));
+    }
+    public void drawGifFrameByIndex(int i, Graphics g, Rectangle r) {
         BufferedImage img = drawableImages[i];
 
-        g.drawImage(img, 0, 0, null);
+        g.drawImage(img, r.x, r.y, r.width, r.height, null);
+    }
+
+    public int getW() {
+        return w;
+    }
+
+    public int getF() {
+        return frams;
+    }
+
+    public int getH() {
+        return h;
+    }
+
+    public Gif flip() {
+
+        Gif g = new Gif(this.path, this.props);
+
+        for (int i = 0; i < g.drawableImages.length; i++) {
+            g.drawableImages[i] = Spritesheet.flipImage(g.drawableImages[i]);
+        }
+
+        for (int i = 0; i < g.frames.length; i++) {
+            ImageFrame f = g.frames[i];
+            g.frames[i] = new ImageFrame(Spritesheet.flipImage(f.getImage()), f.getDelay(), f.getDisposal(), f.getWidth(), f.getHeight(), f.getBack());
+        }
+
+        return g;
     }
 
     @Override
     public String toString() {
-        return "Gif{" +
+        return "Gif {" +
                 "path='" + path + '\'' +
                 ", frames=" + Arrays.toString(frames) +
                 ", w=" + w +
                 ", h=" + h +
-                ", drawableImages=" + Arrays.toString(drawableImages) +
-                ", frams=" + frams +
-                ", frms=" + frms +
-                '}';
+            '}';
     }
 }

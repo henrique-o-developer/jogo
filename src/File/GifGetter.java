@@ -25,18 +25,19 @@ public class GifGetter {
             case "redirect": {
                 red = new RedirectFileInterpreter(f);
 
-                System.out.println(red.file.getName());
+                FileInterpreter fi = getProps(red.file.getName(), red.dir.getAbsolutePath());
 
-                gif = new Gif(red.file.getAbsolutePath());
+                props = fi == null ? null : fi.props;
 
-                props = Objects.requireNonNull(getProps(red.file.getName(), red.dir.getAbsolutePath())).props;
+                gif = new Gif(red.file.getAbsolutePath(), props);
                 break;
             }
 
             case "gif": {
-                gif = new Gif(f.getAbsolutePath());
+                FileInterpreter fi = getProps(f.getName(), f.getParent());
 
-                props = Objects.requireNonNull(getProps(f.getName(), f.getParent())).props;
+                props = fi == null ? null : fi.props;
+                gif = new Gif(f.getAbsolutePath(), props);
                 break;
             }
         }
@@ -44,9 +45,6 @@ public class GifGetter {
 
     private FileInterpreter getProps(String fileName, String dir) {
         File f = new File(dir + "/" + fileName + ".props");
-
-        System.out.println(f);
-        System.out.println((f.exists()) ? new FileInterpreter(f) : null);
 
         return (f.exists()) ? new FileInterpreter(f) : null;
     }
@@ -57,6 +55,14 @@ public class GifGetter {
 
     public Gif getGif() {
         return gif;
+    }
+
+    public GifGetter invertGif() {
+        GifGetter gg = new GifGetter(this.f);
+
+        gg.gif = gg.gif.flip();
+
+        return gg;
     }
 
     @Override

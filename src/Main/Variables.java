@@ -19,6 +19,13 @@ public class Variables {
         DECOMP_DIR = GAME_HOME + java.io.File.separator + "game_files"
     ;
 
+    public static Key
+        U = Key.getByCode(38),
+        D = Key.getByCode(40),
+        L = Key.getByCode(37),
+        R = Key.getByCode(39)
+    ;
+
     static {
         DECOMP_DIR = isExecutingInJar()?DECOMP_DIR:"res";
     }
@@ -54,8 +61,8 @@ public class Variables {
                         g.setColor(Color.BLACK);
                         g.fillRect(0, 0, Main.WIDTH * Main.SCALE, Main.HEIGHT * Main.SCALE);
                         g.setColor(Color.WHITE);
-                        Main.drawCenteredString(g, "decompiling file " + decomplingName, new Rectangle(0, 0 - 25, Main.WIDTH * Main.SCALE, Main.HEIGHT * Main.SCALE), new Font("arial", Font.BOLD, 20));
-                        Main.drawCenteredString(g, Byte + "/" + from, new Rectangle(0, 0 + 25, Main.WIDTH * Main.SCALE, Main.HEIGHT * Main.SCALE), new Font("arial", Font.BOLD, 30));
+                        Main.drawCenteredString(g, "decompiling file " + decomplingName, new Rectangle(0, -25, Main.WIDTH * Main.SCALE, Main.HEIGHT * Main.SCALE), new Font("arial", Font.BOLD, 20));
+                        Main.drawCenteredString(g, Byte + "/" + from, new Rectangle(0, 25, Main.WIDTH * Main.SCALE, Main.HEIGHT * Main.SCALE), new Font("arial", Font.BOLD, 30));
 
                         new RenderInlineEvent("showing", null, 0, false, false);
                         bs.show();

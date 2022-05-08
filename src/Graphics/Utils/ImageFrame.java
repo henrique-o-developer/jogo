@@ -8,13 +8,15 @@ public class ImageFrame {
     private final BufferedImage image;
     private final String disposal;
     private final int width, height;
+    private final Color b;
 
-    public ImageFrame(BufferedImage image, int delay, String disposal, int width, int height){
+    public ImageFrame(BufferedImage image, int delay, String disposal, int width, int height, Color b){
         this.image = image;
         this.delay = delay;
         this.disposal = disposal;
         this.width = width;
         this.height = height;
+        this.b = b;
     }
 
     public ImageFrame(BufferedImage image){
@@ -23,6 +25,11 @@ public class ImageFrame {
         this.disposal = null;
         this.width = -1;
         this.height = -1;
+        this.b = null;
+    }
+
+    public Color getBack() {
+        return b;
     }
 
     public BufferedImage getImage() {
@@ -53,6 +60,7 @@ public class ImageFrame {
                 ", disposal='" + disposal + '\'' +
                 ", width=" + width +
                 ", height=" + height +
+                "backgrondColor: "+ b +
                 '}';
     }
 }
