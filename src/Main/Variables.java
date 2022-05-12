@@ -1,6 +1,6 @@
 package Main;
 
-import Events.Inline.*;
+import Events.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.io.File;
@@ -47,24 +47,24 @@ public class Variables {
             new Thread(() -> {
                 while (DECOMPILING) {
                     System.out.println("a");
-                    new InitInlineEvent("checking buffer strategy", null, 0, false, false);
+                    new InitEvent("checking buffer strategy", null);
 
                     BufferStrategy bs = Main.obj.getBufferStrategy();
 
                     if (bs == null) {
                         Main.obj.createBufferStrategy(3);
                     } else {
-                        new RenderInlineEvent("getting defined graphics", null, 0, false, false);
+                        new RenderEvent("getting defined graphics", null);
                         Graphics g = bs.getDrawGraphics();
 
-                        new RenderInlineEvent("drawing texts", null, 0, false, false);
+                        new RenderEvent("drawing texts", null);
                         g.setColor(Color.BLACK);
                         g.fillRect(0, 0, Main.WIDTH * Main.SCALE, Main.HEIGHT * Main.SCALE);
                         g.setColor(Color.WHITE);
                         Main.drawCenteredString(g, "decompiling file " + decomplingName, new Rectangle(0, -25, Main.WIDTH * Main.SCALE, Main.HEIGHT * Main.SCALE), new Font("arial", Font.BOLD, 20));
                         Main.drawCenteredString(g, Byte + "/" + from, new Rectangle(0, 25, Main.WIDTH * Main.SCALE, Main.HEIGHT * Main.SCALE), new Font("arial", Font.BOLD, 30));
 
-                        new RenderInlineEvent("showing", null, 0, false, false);
+                        new RenderEvent("showing", null);
                         bs.show();
                     }
                 }

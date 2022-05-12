@@ -1,6 +1,6 @@
 # <- this is an commnet
 
 drawBGColor: false # prevents draw bg color
-restartGifAtIndex: 5 # restart gif index
-stopGifAtIndex: 10 # normally this is the stop frame
+restartGifAtIndex: 10 # restart gif index
+stopGifAtIndex: 13 # normally this is the stop frame
 endAnimationAtIndex: 14 # indicates what frame is the first frame of end of gif

@@ -8,33 +8,40 @@ import Main.Main;
 import java.util.TimerTask;
 
 public class Event extends EventHandler {
-    public String what;
-    public String ext;
-    public CancelInterface cancel;
-    public long timeOfCall;
-    public boolean canceled = false;
+    public final String what;
+    public final String ext;
+    public final CancelInterface cancel;
+    public final long timeOfCall;
+    protected boolean canceled = false;
     public String getEventName() {
         return this.getClass().getSimpleName();
     }
 
     public Event(String what, CancelInterface cancel, String ext) {
+        if (cancel == null) cancel = new CancelInterface() {};
+
         this.what = what;
         this.cancel = cancel;
         this.timeOfCall = System.currentTimeMillis();
         this.ext = ext;
 
-        if (!cancel.isCancelable() || !cancel.hasMaxTimeToCancel()) cancel.run();
-        else Main.setTimeout(new TimerTask() {
-            @Override
-            public void run() {
-                if (!canceled) cancel.run();
-            }
-        }, cancel.maxTimeToCancelInMills() - 1);
+        if (!cancel.isCancelable() ||
+                !cancel.hasMaxTimeToCancel())
+            cancel.run();
+        else {
+            CancelInterface finalCancel = cancel;
+            Main.setTimeout(new TimerTask() {
+                @Override
+                public void run() {
+                    if (!canceled) finalCancel.run();
+                }
+            }, cancel.maxTimeToCancelInMills() - 1);
+        }
 
         addEvent(this);
     }
 
-    public Success cancel() {
+     public Success cancel() {
         canceled = true;
         if (!cancel.isCancelable()) {
             return new CancelError("this event is not cancelable");
@@ -45,5 +52,9 @@ public class Event extends EventHandler {
         }
 
         return cancel.cancel();
+    }
+
+    public boolean getCanceled() {
+        return canceled;
     }
 }

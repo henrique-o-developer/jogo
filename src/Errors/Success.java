@@ -19,4 +19,12 @@ public class Success {
     public String getFullMessage() {
         return "success guaranteed in "+cause;
     }
+
+    @Override
+    public String toString() {
+        return "Success {" +
+                "success=" + success +
+                ", cause='" + cause + '\'' +
+                '}';
+    }
 }

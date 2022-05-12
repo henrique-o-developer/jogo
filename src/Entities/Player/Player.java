@@ -83,5 +83,15 @@ public class Player extends Entity {
                 break;
             }
         }
+
+        while (moves.size() > 500) moves.remove(500);
+    }
+
+    public byte getMvX() {
+        return mvX;
+    }
+
+    public byte getMvY() {
+        return mvY;
     }
 }
