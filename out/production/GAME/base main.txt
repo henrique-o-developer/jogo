@@ -2,7 +2,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.Media;
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
@@ -68,7 +68,7 @@ public class Main.Main extends Canvas implements Runnable {
 			image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		}
 
-		Graphics g = image.getGraphics();
+		Media g = image.getGraphics();
 		g.setColor(new Color(40, 40, 40));
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		g = bs.getDrawGraphics();
@@ -98,7 +98,6 @@ public class Main.Main extends Canvas implements Runnable {
 
 
 			if (System.currentTimeMillis() - timer >= 1000) {
-				System.out.println("fps: "+ fps);
 				ffps = fps;
 				fps = 0;
 				timer = System.currentTimeMillis();

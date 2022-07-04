@@ -89,6 +89,17 @@ nossa mas o jogo nem tem personagem direito e voce ja esta adicionando ele ao gi
 ta demorando muito pra sair novas verçoes! pq? preguiça!
 
 onde posso baixar o jogo? bom [aqui](https://github.com/henrique-o-developer/jogo/blob/master/out/artifacts/compiled/GAME.jar) mas eu nao garanto que esteja atualizado pq eu me esqueço
+
+engine: java 15 (correto)
+
+# como executar
+instale o java 15
+
+digite o seguinte comando no terminal: 
+```shell
+java -jar GAME.jar
+```
+ou de 2 cliques no arquivo chamado GAME.jar :)
 # participantes
 
 programador, graphics designer, sound designer, etc...: henrique franchesco de almeida do rosario<br>

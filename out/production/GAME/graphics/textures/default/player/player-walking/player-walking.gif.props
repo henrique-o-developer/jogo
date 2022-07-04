@@ -4,3 +4,4 @@ drawBGColor: false # prevents draw bg color
 restartGifAtIndex: 10 # restart gif index
 stopGifAtIndex: 13 # normally this is the stop frame
 endAnimationAtIndex: 14 # indicates what frame is the first frame of end of gif
+linkAudioAs: ../player-walking.wav # link gif to audio

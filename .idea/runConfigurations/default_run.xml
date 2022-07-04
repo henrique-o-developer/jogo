@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="default run" type="Application" factoryName="Application">
-    <option name="ALTERNATIVE_JRE_PATH" value="11 (2)" />
+    <option name="ALTERNATIVE_JRE_PATH" value="corretto-15 (2)" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-    <option name="MAIN_CLASS_NAME" value="Main.Main" />
+    <option name="MAIN_CLASS_NAME" value="com.hrstd.main.Game" />
     <module name="GAME" />
     <method v="2">
       <option name="Make" enabled="true" />
