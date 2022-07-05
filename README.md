@@ -55,25 +55,33 @@ mas qual seria o codigo?<br>
 
 algo tipo isso: <br>
 ```java
-    class pluginMuintuLegaul {
-        public void onGameInit() {
-            // ativa quando o jogo inicia (quando a janela do jogo abre)
-        }
-
-        public void onGameStart() {
-            // ativa quando o player clica em entrar no jogo
+    class pluginMuintuLegaul implements com.hrstd.components.Plugin{
+        public void onEnable() { 
+            // ativa quando o plugin é carregado
         }
         
-        public void onGameEnd() {
-            // quando o player clica em sair
+        public void onDisable() {
+            // ativa quando o plugin e desativado 
         }
         
-        public void onGameExit() {
-            // quando o player fecha o jogo
+        public void tick() {
+            // da tick até o plugin desativar
         }
         
-        public void onSave() {
-            // quando o jogo e salvo
+        public void render(Graphics g) {
+            // renderiza o plugin
+        }
+        
+        public String getContextToEnable() {
+            // retorna o contexto que pode ser: ["mainscreen", "gameinstance"]
+        }
+        
+        public String getName() {
+            // retorna o nome do plugin
+        }
+        
+        public String[] getDependencies() {
+            // retorna um String array dos nomes dos plugin aos quais voce depende pra rodar
         }
     }
 ```

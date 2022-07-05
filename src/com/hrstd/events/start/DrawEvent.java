@@ -30,6 +30,16 @@ public class DrawEvent extends StartEvent {
             this.t = t;
         }
 
+        public Drawable(int x, int y, Object t) {
+            this.pos = new Rectangle(x, y);
+            this.t = t;
+        }
+
+        public Drawable(int x, int y, int w, int h, Object t) {
+            this.pos = new Rectangle(x, y, w, h);
+            this.t = t;
+        }
+
         public Rectangle getPos() {
             return pos;
         }

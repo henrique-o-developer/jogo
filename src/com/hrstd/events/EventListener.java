@@ -24,7 +24,11 @@ public class EventListener {
             events.remove(0);
         }
 
-        getListeners().forEach(r -> r.run(e));
+        for (int i = 0; i < getListeners().size(); i++) {
+            EventListenerInterface r = getListeners().get(i);
+
+            r.run(e, () -> getListeners().remove(r));
+        }
     }
 
     public void addEvents(Event[] es) {
@@ -36,4 +40,5 @@ public class EventListener {
     public void addListener(EventListenerInterface r) {
         listeners.add(r);
     }
+
 }
