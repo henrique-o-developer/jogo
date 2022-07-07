@@ -1,7 +1,7 @@
-package antigo.File;
+package com.hrstd.components.file;
 
-import antigo.GifGetter;
-import antigo.Main.KeyMap;
+import com.hrstd.components.KeyMap;
+
 import java.io.File;
 
 public class TextureGetter {
@@ -13,7 +13,9 @@ public class TextureGetter {
                 "player.player-standard",
                 "tiles.grass",
                 "tiles.sky",
-                "tiles.dirt"
+                "tiles.dirt",
+                "misc.button",
+                "misc.background"
         };
 
         for (String s : get) {

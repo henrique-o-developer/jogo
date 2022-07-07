@@ -1,4 +1,4 @@
-package antigo;
+package com.hrstd.components;
 
 import java.awt.event.KeyEvent;
 import java.util.Objects;

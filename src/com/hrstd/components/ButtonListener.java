@@ -1,5 +1,6 @@
 package com.hrstd.components;
 
+import com.hrstd.components.file.Gif;
 import com.hrstd.events.EventListener;
 import com.hrstd.events.start.MouseClickEvent;
 import com.hrstd.main.Game;
@@ -13,14 +14,14 @@ public class ButtonListener {
     public static class Button {}
 
     public static class MouseClicable extends Button {
-        BufferedImage texture;
+        Gif texture;
         Interface r;
         Rectangle pos;
         boolean enabled = true;
 
-        public MouseClicable(BufferedImage texture, Interface r, Rectangle p) {
+        public MouseClicable(Gif texture, Interface r, Rectangle p) {
             this.r = r;
-            this.texture = texture;
+            this.texture = new Gif("/home/henrique/Documents/pro/java/GAME/res/graphics/textures/default/misc/button.gif", null);
             this.pos = p;
 
             EventListener.def.addListener((e, remove) -> {
@@ -32,8 +33,8 @@ public class ButtonListener {
                 if (!(e instanceof MouseClickEvent)) return;
                 if (!Objects.equals(((MouseClickEvent) e).getType(), "clicked")) return;
 
-                int x = ((MouseClickEvent) e).getX() / (frame.getWidth() / DWIDTH);
-                int y = ((MouseClickEvent) e).getY() / (frame.getHeight() / DHEIGHT);
+                int x = ((MouseClickEvent) e).getX() / (Game.frame.getWidth() / Game.DWIDTH);
+                int y = ((MouseClickEvent) e).getY() / (Game.frame.getHeight() / Game.DHEIGHT);
 
                 Rectangle i = new Rectangle(x, y, 1, 1);
 
@@ -44,7 +45,11 @@ public class ButtonListener {
         }
 
         public void render(Graphics g) {
-            g.drawImage(texture, pos.x, pos.y, pos.width, pos.height, null);
+
+            if (enabled) texture.drawAnimatedGif(g, pos);
+            else {
+                //if (texture.)
+            }
         }
 
         public void disable() {

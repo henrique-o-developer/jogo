@@ -1,5 +1,6 @@
 package com.hrstd.main;
 
+import com.hrstd.components.ButtonListener;
 import com.hrstd.events.Event;
 import com.hrstd.events.EventListener;
 import com.hrstd.events.EventListenerInterface;
@@ -29,6 +30,9 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
     public static double FPS = 60, fps = 0, ffps = FPS;
     public static int DWIDTH = 240, WIDTH = DWIDTH, DHEIGHT = 160, HEIGHT = DHEIGHT, SCALE = 3;
     private static BufferedImage image;
+    public static Game obj;
+
+    static ButtonListener.MouseClicable c;
 
 	public Game() {
         setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
@@ -37,6 +41,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
         addKeyListener(this);
         addMouseListener(this);
+
+        obj = this;
+
+        c = new ButtonListener.MouseClicable(null, (c) -> System.out.println("Ó"), new Rectangle(0, 0, 50, 50));
     }
 
     public synchronized void start() {
@@ -96,6 +104,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
         Graphics g = image.getGraphics();
         g.setColor(new Color(40, 40, 40));
         g.fillRect(0, 0, WIDTH, HEIGHT);
+        c.render(g);
         g = bs.getDrawGraphics();
         g.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
         g.setFont(new Font("Arial", Font.BOLD, 10));

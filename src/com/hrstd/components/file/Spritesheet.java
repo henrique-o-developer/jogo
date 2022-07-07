@@ -1,4 +1,4 @@
-package antigo;
+package com.hrstd.components.file;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

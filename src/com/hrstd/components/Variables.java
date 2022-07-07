@@ -1,12 +1,9 @@
-package antigo.Main;
+package com.hrstd.components;
 
-import antigo.*;
-import antigo.Entities.Player.Player;
-import Events.*;
-import File.*;
-import antigo.File.TextureGetter;
-import antigo.World.GenerateMap;
-import antigo.World.MapManipulator;
+import com.hrstd.components.file.Gif;
+import com.hrstd.components.file.TextureGetter;
+import com.hrstd.events.start.StandardEvent;
+import com.hrstd.main.Game;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
@@ -34,13 +31,13 @@ public class Variables {
         HEIGHT = 32
     ;
 
-    public static GenerateMap.GeneratedMap map;
+    /*public static GenerateMap.GeneratedMap map;
     public static MapManipulator map_manip;
 
     public static void setMap(String mapName) {
         map = new GenerateMap(new TiffGetter(new File(MAPS_DIR+"/"+mapName+".tiff")).getTiff()).map;
         map_manip = new MapManipulator(map);
-    }
+    }*/
 
     public static void changeTexture(String texture) {
         ACTUAL_TEXTURE = texture;
@@ -65,41 +62,55 @@ public class Variables {
     public static int from;
 
     public static boolean isExecutingInJar() {
-        return String.valueOf(Main.class.getProtectionDomain().getCodeSource().getLocation().toString()).endsWith(".jar");
+        return String.valueOf(Game.class.getProtectionDomain().getCodeSource().getLocation().toString()).endsWith(".jar");
     }
 
     public static void setTextures() {
         texture.setAll(TEXTURES_DIR);
     }
 
+    public static void DrawDefined(toDraw draw) {
+        new StandardEvent("checking buffer strategy");
+
+        BufferStrategy bs = Game.obj.getBufferStrategy();
+
+        if (bs == null) {
+            Game.obj.createBufferStrategy(3);
+
+            return;
+        }
+        new StandardEvent("getting defined graphics");
+        Graphics g = bs.getDrawGraphics();
+
+        new StandardEvent("executing draw");
+        draw.run(g);
+
+        new StandardEvent("showing");
+        bs.show();
+    }
+
+    public static void DrawDefaultBackground(Graphics g) {
+        new StandardEvent("cleaning screen");
+
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, Game.WIDTH * Game.SCALE, Game.HEIGHT * Game.SCALE);
+        g.setColor(Color.WHITE);
+
+        (((Gif) texture.get("misc.background").getValue()).drawAnimatedGif(g, 0, 0, Game.WIDTH * Game.SCALE, Game.HEIGHT * Game.SCALE)).registerEvent();
+    }
+
     public static void decompileJar() {
-        if (DECOMPILING) return;
+        /*if (DECOMPILING) return;
 
         DECOMPILING = true;
 
         new Thread(() -> {
             while (DECOMPILING) {
-                new InitEvent("checking buffer strategy", null);
 
-                BufferStrategy bs = Main.obj.getBufferStrategy();
+            Main.drawCenteredString(g, "decompiling file " + decomplingName, new Rectangle(0, -25, Main.WIDTH * Main.SCALE, Main.HEIGHT * Main.SCALE), new Font("arial", Font.BOLD, 20));
+            Main.drawCenteredString(g, Byte + "/" + from, new Rectangle(0, 25, Main.WIDTH * Main.SCALE, Main.HEIGHT * Main.SCALE), new Font("arial", Font.BOLD, 30));
 
-                if (bs == null) {
-                    Main.obj.createBufferStrategy(3);
-                } else {
-                    new RenderEvent("getting defined graphics", null);
-                    Graphics g = bs.getDrawGraphics();
-
-                    new RenderEvent("drawing texts", null);
-                    g.setColor(Color.BLACK);
-                    g.fillRect(0, 0, Main.WIDTH * Main.SCALE, Main.HEIGHT * Main.SCALE);
-                    g.setColor(Color.WHITE);
-                    Main.drawCenteredString(g, "decompiling file " + decomplingName, new Rectangle(0, -25, Main.WIDTH * Main.SCALE, Main.HEIGHT * Main.SCALE), new Font("arial", Font.BOLD, 20));
-                    Main.drawCenteredString(g, Byte + "/" + from, new Rectangle(0, 25, Main.WIDTH * Main.SCALE, Main.HEIGHT * Main.SCALE), new Font("arial", Font.BOLD, 30));
-
-                    new RenderEvent("showing", null);
-                    bs.show();
-                }
-            }
+            new RenderEvent("showing", null);
 
             new InitEvent("setting Spritesheet vars", null);
 
@@ -151,6 +162,10 @@ public class Variables {
             } catch (Exception e){
                 e.printStackTrace();
             }
-        }).start();
+        }).start();*/
+    }
+
+    public interface toDraw {
+        void run(Graphics g);
     }
 }
